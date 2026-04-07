@@ -17,6 +17,9 @@
           "debug_mode": "Debug Mode (Use API URL if provided)",
           "api_url": "API URL (Optional, defaults to production)",
           "upload_interval": "Upload Interval (minutes)"
+        },
+        "data_description": {
+          "upload_interval": "Default is 5. Lower values may result in throttling for non-donation users"
         }
       }
     }
@@ -31,6 +34,9 @@
           "temperature_entity": "Temperature Entity (Optional)",
           "api_url": "API URL (Optional, defaults to production)",
           "upload_interval": "Upload Interval (minutes)"
+        },
+        "data_description": {
+          "upload_interval": "Default is 5. Lower values may result in throttling for non-donation users"
         }
       }
     }
