@@ -34,6 +34,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up PVOutput Uploader from a config entry."""
+    system_id = entry.data.get(CONF_SYSTEM_ID)
+    _LOGGER.info("Setting up PVOutput System %s", system_id)
     
     # Create device
     device_registry = dr.async_get(hass)
@@ -72,6 +74,8 @@ async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    system_id = entry.data.get(CONF_SYSTEM_ID)
+    _LOGGER.info("Unloading PVOutput System %s", system_id)
     if entry.entry_id in hass.data[DOMAIN]:
         hass.data[DOMAIN].pop(entry.entry_id)
     return True
@@ -148,13 +152,27 @@ class PVOutputUploader:
             "X-Pvoutput-SystemId": system_id,
         }
 
+        # Detailed activity log
+        log_parts = []
+        if pv_energy is not None:
+            log_parts.append(f"Energy: {int(pv_energy)} Wh")
+        if pv_power is not None:
+            log_parts.append(f"Power: {int(pv_power)} W")
+        if temperature_entity and temperature_value is not None:
+            log_parts.append(f"Temp: {temperature_value:.1f} °C")
+        
+        _LOGGER.info(
+            "Uploading data for system %s: %s", 
+            system_id, 
+            ", ".join(log_parts) if log_parts else "No data"
+        )
         _LOGGER.debug("Uploading to PVOutput (%s): %s", url, payload)
 
         try:
             session = async_get_clientsession(self.hass)
             async with session.post(url, data=payload, headers=headers, timeout=10) as response:
                 if response.status == 200:
-                    _LOGGER.info("Successfully uploaded data to PVOutput for system %s", system_id)
+                    _LOGGER.info("Successfully uploaded to PVOutput (System %s)", system_id)
                 else:
                     text = await response.text()
                     _LOGGER.error("Failed to upload to PVOutput: %s %s", response.status, text)
