@@ -52,6 +52,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     conf = {**entry.data, **entry.options}
     interval = conf.get(CONF_UPLOAD_INTERVAL, DEFAULT_UPLOAD_INTERVAL)
     
+    # Trigger first upload right away
+    hass.async_create_task(uploader.async_upload())
+
     entry.async_on_unload(
         async_track_time_interval(
             hass, uploader.async_upload, timedelta(minutes=interval)
