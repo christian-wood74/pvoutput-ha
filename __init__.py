@@ -137,12 +137,12 @@ class PVOutputUploader:
         pv_energy = self._get_value(pv_energy_entity)
         
         if pv_power is None and pv_energy is None:
-            _LOGGER.warning("Both power and energy entities are None or unavailable, skipping upload for System %s", system_id)
+            _LOGGER.warning("Skipping upload: both power and energy entities are unavailable for System %s", system_id)
             self.hass.bus.async_fire(
                 EVENT_PVOUTPUT_UPLOAD,
                 {
                     "device_id": self.device_id,
-                    "message": "Skipping upload: both power and energy entities are None or unavailable",
+                    "message": "Skipping upload: both power and energy entities are unavailable",
                 },
             )
             return
@@ -170,29 +170,25 @@ class PVOutputUploader:
         }
 
         
-        _LOGGER.info(
-            "Uploading data for system %s: %s", 
-            system_id, 
-            ", ".join(payload) if payload else "No data"
-        )
+        payload_str = f"payload={{{','.join(f'{k}={v}' for k, v in payload.items())}}}"
         _LOGGER.debug("Uploading to PVOutput (%s): %s", url, payload)
 
         try:
             session = async_get_clientsession(self.hass)
             async with session.post(url, data=payload, headers=headers, timeout=10) as response:
                 if response.status == 200:
-                    _LOGGER.info("Successfully uploaded to PVOutput (System %s)", system_id)
+                    _LOGGER.info(f"Uploaded {payload_str} (System={system_id})")
                     # Log activity to UI Logbook
                     self.hass.bus.async_fire(
                         EVENT_PVOUTPUT_UPLOAD,
                         {
                             "device_id": self.device_id,
-                            "message": f"Successfully uploaded to PVOutput: {', '.join(payload)}",
+                            "message": f"Uploaded: {payload_str}",
                         },
                     )
                 else:
                     text = await response.text()
-                    error_message = f"Failed to upload to PVOutput: {response.status} {text} -= {', '.join(payload)}"
+                    error_message = f"Failed to upload: {response.status} {text} = {payload_str}"
                     _LOGGER.error(error_message)
                     # Log failure activity to UI Logbook
                     self.hass.bus.async_fire(
@@ -203,9 +199,8 @@ class PVOutputUploader:
                         },
                     )
         except Exception as ex:
-            error_message = f"Error uploading to PVOutput: {ex} with payload: {', '.join(payload)}"
+            error_message = f"Error={ex} with payload: {payload_str}"
             _LOGGER.error(error_message)
-            # Log failure activity to UI Logbook
             self.hass.bus.async_fire(
                 EVENT_PVOUTPUT_UPLOAD,
                 {
