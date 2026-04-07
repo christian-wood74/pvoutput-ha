@@ -24,6 +24,7 @@ from .const import (
     ATTR_ENERGY_GENERATION,
     ATTR_POWER_GENERATION,
     ATTR_TEMPERATURE,
+    EVENT_PVOUTPUT_UPLOAD,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,7 +40,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     # Create device
     device_registry = dr.async_get(hass)
-    device_registry.async_get_or_create(
+    device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.data[CONF_SYSTEM_ID])},
         name=f"PVOutput System {entry.data[CONF_SYSTEM_ID]}",
@@ -47,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         model="Uploader",
     )
 
-    uploader = PVOutputUploader(hass, entry)
+    uploader = PVOutputUploader(hass, entry, device.id)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = uploader
 
     # Start the periodic upload
@@ -81,9 +82,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 class PVOutputUploader:
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry, device_id: str):
         self.hass = hass
         self.entry = entry
+        self.device_id = device_id
 
     def _get_value(self, entity_id):
         if not entity_id:
@@ -173,6 +175,14 @@ class PVOutputUploader:
             async with session.post(url, data=payload, headers=headers, timeout=10) as response:
                 if response.status == 200:
                     _LOGGER.info("Successfully uploaded to PVOutput (System %s)", system_id)
+                    # Log activity to UI Logbook
+                    self.hass.bus.async_fire(
+                        EVENT_PVOUTPUT_UPLOAD,
+                        {
+                            "device_id": self.device_id,
+                            "message": f"Successfully uploaded to PVOutput: {', '.join(log_parts)}",
+                        },
+                    )
                 else:
                     text = await response.text()
                     _LOGGER.error("Failed to upload to PVOutput: %s %s", response.status, text)
