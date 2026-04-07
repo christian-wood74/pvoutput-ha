@@ -66,7 +66,9 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_TEMPERATURE_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
-                    vol.Optional(CONF_API_URL): str,
+                    vol.Optional(CONF_API_URL): selector.TextSelector(
+                        selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
+                    ),
                     vol.Required(
                         CONF_UPLOAD_INTERVAL, default=DEFAULT_UPLOAD_INTERVAL
                     ): vol.All(vol.Coerce(int), vol.Range(min=1)),
@@ -117,7 +119,9 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_API_URL,
                         default=conf.get(CONF_API_URL),
-                    ): str,
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
+                    ),
                     vol.Required(
                         CONF_UPLOAD_INTERVAL,
                         default=conf.get(CONF_UPLOAD_INTERVAL, DEFAULT_UPLOAD_INTERVAL),
