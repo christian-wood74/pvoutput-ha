@@ -105,6 +105,12 @@ class PVOutputUploader:
             elif unit == "MWh":
                 value *= 1000000
             
+            # Power conversion
+            elif unit == "kW":
+                value *= 1000
+            elif unit == "MW":
+                value *= 1000000
+            
             # Temperature conversion (PVOutput expects Celsius)
             if unit in ("°F", "F"):
                 value = (value - 32) * 5 / 9
