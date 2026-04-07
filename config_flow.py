@@ -83,10 +83,6 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for PVOutput Uploader."""
 
-    def __init__(self, config_entry):
-        """Initialize."""
-        self.config_entry = config_entry
-
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:

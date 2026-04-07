@@ -14,8 +14,8 @@ from .const import DOMAIN, EVENT_PVOUTPUT_UPLOAD
 
 @callback
 def async_describe_events(
-    hass: HomeAssistant,
-    async_describe_event: Callable[[str, str, Callable[[Event], dict[str, str]]], None],
+        hass: HomeAssistant,
+        async_describe_event: Callable[[str, str, Callable[[Event], dict[str, str]]], None],
 ) -> None:
     """Describe logbook events."""
     device_registry = dr.async_get(hass)
@@ -25,7 +25,7 @@ def async_describe_events(
         """Describe logbook event."""
         device_id = event.data.get(ATTR_DEVICE_ID)
         device_name = "PVOutput System"
-        
+
         if device_id:
             device = device_registry.async_get(device_id)
             if device:
