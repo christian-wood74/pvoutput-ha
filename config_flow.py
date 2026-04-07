@@ -76,9 +76,11 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
         """Get the options flow for this handler."""
-        return PVOutputOptionsFlowHandler(config_entry)
+        return PVOutputOptionsFlowHandler()
 
 class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for PVOutput Uploader."""
