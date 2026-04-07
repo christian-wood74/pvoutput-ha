@@ -191,6 +191,24 @@ class PVOutputUploader:
                     )
                 else:
                     text = await response.text()
-                    _LOGGER.error("Failed to upload to PVOutput: %s %s", response.status, text)
+                    error_message = f"Failed to upload to PVOutput: {response.status} {text}"
+                    _LOGGER.error(error_message)
+                    # Log failure activity to UI Logbook
+                    self.hass.bus.async_fire(
+                        EVENT_PVOUTPUT_UPLOAD,
+                        {
+                            "device_id": self.device_id,
+                            "message": error_message,
+                        },
+                    )
         except Exception as ex:
-            _LOGGER.error("Error uploading to PVOutput: %s", ex)
+            error_message = f"Error uploading to PVOutput: {ex}"
+            _LOGGER.error(error_message)
+            # Log failure activity to UI Logbook
+            self.hass.bus.async_fire(
+                EVENT_PVOUTPUT_UPLOAD,
+                {
+                    "device_id": self.device_id,
+                    "message": error_message,
+                },
+            )
