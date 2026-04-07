@@ -11,8 +11,8 @@
       "entities": {
         "title": "PVOutput Entity Selection",
         "data": {
-          "pv_power_entity": "PV Power Entity (W)",
-          "pv_energy_entity": "PV Energy Entity (Wh/kWh)",
+          "pv_power_entity": "PV Power Entity",
+          "pv_energy_entity": "PV Energy Entity",
           "temperature_entity": "Temperature Entity (Optional)",
           "debug_mode": "Debug Mode (Use API URL if provided)",
           "api_url": "API URL (Optional, defaults to production)",
@@ -26,8 +26,8 @@
       "init": {
         "title": "PVOutput Options",
         "data": {
-          "pv_power_entity": "PV Power Entity (W)",
-          "pv_energy_entity": "PV Energy Entity (Wh/kWh)",
+          "pv_power_entity": "PV Power Entity",
+          "pv_energy_entity": "PV Energy Entity",
           "temperature_entity": "Temperature Entity (Optional)",
           "api_url": "API URL (Optional, defaults to production)",
           "upload_interval": "Upload Interval (minutes)"
