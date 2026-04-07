@@ -179,7 +179,7 @@ class PVOutputUploader:
                     )
                 else:
                     text = await response.text()
-                    error_message = f"Failed to upload to PVOutput: {response.status} {text}"
+                    error_message = f"Failed to upload to PVOutput: {response.status} {text} -= {', '.join(payload)}"
                     _LOGGER.error(error_message)
                     # Log failure activity to UI Logbook
                     self.hass.bus.async_fire(
@@ -190,7 +190,7 @@ class PVOutputUploader:
                         },
                     )
         except Exception as ex:
-            error_message = f"Error uploading to PVOutput: {ex}"
+            error_message = f"Error uploading to PVOutput: {ex} with payload: {', '.join(payload)}"
             _LOGGER.error(error_message)
             # Log failure activity to UI Logbook
             self.hass.bus.async_fire(
