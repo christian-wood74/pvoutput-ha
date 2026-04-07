@@ -2,7 +2,6 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import selector
-import homeassistant.helpers.config_validation as cv
 
 from .const import (
     DOMAIN,
@@ -11,7 +10,6 @@ from .const import (
     CONF_PV_POWER_ENTITY,
     CONF_PV_ENERGY_ENTITY,
     CONF_TEMPERATURE_ENTITY,
-    CONF_DEBUG_MODE,
     CONF_API_URL,
     CONF_UPLOAD_INTERVAL,
     DEFAULT_UPLOAD_INTERVAL,
@@ -47,7 +45,7 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_entities(self, user_input=None):
-        """Second step: Select entities and debug flag."""
+        """Second step: Select entities"""
         if user_input is not None:
             self._data.update(user_input)
             return self.async_create_entry(
@@ -68,7 +66,6 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_TEMPERATURE_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
-                    vol.Required(CONF_DEBUG_MODE, default=False): bool,
                     vol.Optional(CONF_API_URL): str,
                     vol.Required(
                         CONF_UPLOAD_INTERVAL, default=DEFAULT_UPLOAD_INTERVAL
@@ -119,10 +116,6 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
                     ): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
-                    vol.Required(
-                        CONF_DEBUG_MODE,
-                        default=conf.get(CONF_DEBUG_MODE, False),
-                    ): bool,
                     vol.Optional(
                         CONF_API_URL,
                         default=conf.get(CONF_API_URL),
