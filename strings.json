@@ -11,8 +11,8 @@
       "entities": {
         "title": "PVOutput Entity Selection",
         "data": {
-          "pv_power_entity": "PV Power Entity",
-          "pv_energy_entity": "PV Energy Entity",
+          "pv_power_entity": "PV Power Entity (Optional if energy selected)",
+          "pv_energy_entity": "PV Energy Entity (Optional if power selected)",
           "temperature_entity": "Temperature Entity (Optional)",
           "debug_mode": "Debug Mode (Use API URL if provided)",
           "api_url": "API URL (Optional, defaults to production)",
@@ -22,6 +22,9 @@
           "upload_interval": "Default is 5. Lower values may result in throttling for non-donation users"
         }
       }
+    },
+    "error": {
+      "missing_entities": "Either Power or Energy entity must be selected"
     }
   },
   "options": {
@@ -29,8 +32,8 @@
       "init": {
         "title": "PVOutput Options",
         "data": {
-          "pv_power_entity": "PV Power Entity",
-          "pv_energy_entity": "PV Energy Entity",
+          "pv_power_entity": "PV Power Entity (Optional if energy selected)",
+          "pv_energy_entity": "PV Energy Entity (Optional if power selected)",
           "temperature_entity": "Temperature Entity (Optional)",
           "api_url": "API URL (Optional, defaults to production)",
           "upload_interval": "Upload Interval (minutes)"
@@ -39,6 +42,9 @@
           "upload_interval": "Default is 5. Lower values may result in throttling for non-donation users"
         }
       }
+    },
+    "error": {
+      "missing_entities": "Either Power or Energy entity must be selected"
     }
   },
   "entity": {

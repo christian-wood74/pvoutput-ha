@@ -135,6 +135,17 @@ class PVOutputUploader:
         pv_power = self._get_value(pv_power_entity)
         pv_energy = self._get_value(pv_energy_entity)
         
+        if pv_power is None and pv_energy is None:
+            _LOGGER.warning("Both power and energy entities are None or unavailable, skipping upload for System %s", system_id)
+            self.hass.bus.async_fire(
+                EVENT_PVOUTPUT_UPLOAD,
+                {
+                    "device_id": self.device_id,
+                    "message": "Skipping upload: both power and energy entities are None or unavailable",
+                },
+            )
+            return
+
         payload = {
             ATTR_DATE: now.strftime("%Y%m%d"),
             ATTR_TIME: now.strftime("%H:%M"),

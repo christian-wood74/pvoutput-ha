@@ -46,21 +46,27 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_entities(self, user_input=None):
         """Second step: Select entities"""
+        errors = {}
         if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(
-                title=f"PVOutput System {self._data[CONF_SYSTEM_ID]}",
-                data=self._data,
-            )
+            if not user_input.get(CONF_PV_POWER_ENTITY) and not user_input.get(
+                CONF_PV_ENERGY_ENTITY
+            ):
+                errors["base"] = "missing_entities"
+            else:
+                self._data.update(user_input)
+                return self.async_create_entry(
+                    title=f"PVOutput System {self._data[CONF_SYSTEM_ID]}",
+                    data=self._data,
+                )
 
         return self.async_show_form(
             step_id="entities",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_PV_POWER_ENTITY): selector.EntitySelector(
+                    vol.Optional(CONF_PV_POWER_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="power")
                     ),
-                    vol.Required(CONF_PV_ENERGY_ENTITY): selector.EntitySelector(
+                    vol.Optional(CONF_PV_ENERGY_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="energy")
                     ),
                     vol.Optional(CONF_TEMPERATURE_ENTITY): selector.EntitySelector(
@@ -74,6 +80,7 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ): vol.All(vol.Coerce(int), vol.Range(min=1)),
                 }
             ),
+            errors=errors,
         )
 
     @staticmethod
@@ -89,8 +96,14 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
+        errors = {}
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            if not user_input.get(CONF_PV_POWER_ENTITY) and not user_input.get(
+                CONF_PV_ENERGY_ENTITY
+            ):
+                errors["base"] = "missing_entities"
+            else:
+                return self.async_create_entry(title="", data=user_input)
 
         conf = {**self.config_entry.data, **self.config_entry.options}
 
@@ -98,13 +111,13 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
+                    vol.Optional(
                         CONF_PV_POWER_ENTITY,
                         default=conf.get(CONF_PV_POWER_ENTITY),
                     ): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="power")
                     ),
-                    vol.Required(
+                    vol.Optional(
                         CONF_PV_ENERGY_ENTITY,
                         default=conf.get(CONF_PV_ENERGY_ENTITY),
                     ): selector.EntitySelector(
@@ -128,4 +141,5 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
                     ): vol.All(vol.Coerce(int), vol.Range(min=1)),
                 }
             ),
+            errors=errors,
         )
