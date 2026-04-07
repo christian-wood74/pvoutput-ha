@@ -63,16 +63,16 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="entities",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_PV_POWER_ENTITY): selector.EntitySelector(
+                    vol.Optional(CONF_PV_POWER_ENTITY, default=""): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="power")
                     ),
-                    vol.Optional(CONF_PV_ENERGY_ENTITY): selector.EntitySelector(
+                    vol.Optional(CONF_PV_ENERGY_ENTITY, default=""): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="energy")
                     ),
-                    vol.Optional(CONF_TEMPERATURE_ENTITY): selector.EntitySelector(
+                    vol.Optional(CONF_TEMPERATURE_ENTITY, default=""): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
-                    vol.Optional(CONF_API_URL): selector.TextSelector(
+                    vol.Optional(CONF_API_URL, default=""): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
                     ),
                     vol.Required(
@@ -113,25 +113,25 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
                 {
                     vol.Optional(
                         CONF_PV_POWER_ENTITY,
-                        default=conf.get(CONF_PV_POWER_ENTITY),
+                        default=conf.get(CONF_PV_POWER_ENTITY, ""),
                     ): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="power")
                     ),
                     vol.Optional(
                         CONF_PV_ENERGY_ENTITY,
-                        default=conf.get(CONF_PV_ENERGY_ENTITY),
+                        default=conf.get(CONF_PV_ENERGY_ENTITY, ""),
                     ): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="energy")
                     ),
                     vol.Optional(
                         CONF_TEMPERATURE_ENTITY,
-                        default=conf.get(CONF_TEMPERATURE_ENTITY),
+                        default=conf.get(CONF_TEMPERATURE_ENTITY, ""),
                     ): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
                     vol.Optional(
                         CONF_API_URL,
-                        default=conf.get(CONF_API_URL),
+                        default=conf.get(CONF_API_URL, ""),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
                     ),
