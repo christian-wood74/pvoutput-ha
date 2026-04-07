@@ -135,10 +135,6 @@ class PVOutputUploader:
         pv_power = self._get_value(pv_power_entity)
         pv_energy = self._get_value(pv_energy_entity)
         
-        if pv_power is None and pv_energy is None:
-            _LOGGER.debug("No power or energy data to upload")
-            return
-
         payload = {
             ATTR_DATE: now.strftime("%Y%m%d"),
             ATTR_TIME: now.strftime("%H:%M"),
@@ -160,19 +156,11 @@ class PVOutputUploader:
             "X-Pvoutput-SystemId": system_id,
         }
 
-        # Detailed activity log
-        log_parts = []
-        if pv_energy is not None:
-            log_parts.append(f"Energy: {int(pv_energy)} Wh")
-        if pv_power is not None:
-            log_parts.append(f"Power: {int(pv_power)} W")
-        if temperature_entity and temperature_value is not None:
-            log_parts.append(f"Temp: {temperature_value:.1f} °C")
         
         _LOGGER.info(
             "Uploading data for system %s: %s", 
             system_id, 
-            ", ".join(log_parts) if log_parts else "No data"
+            ", ".join(payload) if payload else "No data"
         )
         _LOGGER.debug("Uploading to PVOutput (%s): %s", url, payload)
 
@@ -186,7 +174,7 @@ class PVOutputUploader:
                         EVENT_PVOUTPUT_UPLOAD,
                         {
                             "device_id": self.device_id,
-                            "message": f"Successfully uploaded to PVOutput: {', '.join(log_parts)}",
+                            "message": f"Successfully uploaded to PVOutput: {', '.join(payload)}",
                         },
                     )
                 else:
