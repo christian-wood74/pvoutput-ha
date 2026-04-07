@@ -1,0 +1,39 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PVOutput API Settings",
+        "data": {
+          "api_key": "API Key (X-Pvoutput-Apikey)",
+          "system_id": "System ID (X-Pvoutput-SystemId)"
+        }
+      },
+      "entities": {
+        "title": "PVOutput Entity Selection",
+        "data": {
+          "pv_power_entity": "PV Power Entity (W)",
+          "pv_energy_entity": "PV Energy Entity (Wh/kWh)",
+          "temperature_entity": "Temperature Entity (Optional)",
+          "debug_mode": "Debug Mode (Use API URL if provided)",
+          "api_url": "API URL (Optional, defaults to production)",
+          "upload_interval": "Upload Interval (minutes)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "PVOutput Options",
+        "data": {
+          "pv_power_entity": "PV Power Entity (W)",
+          "pv_energy_entity": "PV Energy Entity (Wh/kWh)",
+          "temperature_entity": "Temperature Entity (Optional)",
+          "debug_mode": "Debug Mode (Use API URL if provided)",
+          "api_url": "API URL (Optional, defaults to production)",
+          "upload_interval": "Upload Interval (minutes)"
+        }
+      }
+    }
+  }
+}
