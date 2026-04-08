@@ -24,7 +24,6 @@ from .const import (
     ATTR_ENERGY_GENERATION,
     ATTR_POWER_GENERATION,
     ATTR_TEMPERATURE,
-    ATTR_NET_FLAG,
     EVENT_PVOUTPUT_UPLOAD,
 )
 
@@ -154,7 +153,6 @@ class PVOutputUploader:
         
         if pv_energy is not None:
             payload[ATTR_ENERGY_GENERATION] = int(pv_energy)
-            payload[ATTR_NET_FLAG] = 1
         if pv_power is not None:
             payload[ATTR_POWER_GENERATION] = int(pv_power)
             
