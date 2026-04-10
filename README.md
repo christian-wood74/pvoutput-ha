@@ -2,6 +2,8 @@
 
 The **PVOutput Uploader** is a custom Home Assistant integration that allows you to upload solar power, energy generation, and temperature data from your Home Assistant sensors to [PVOutput.org](https://pvoutput.org/).
 
+![](assets/config_flow_ui.png)
+
 ## Features
 
 - **Automated Uploads**: Automatically push data to PVOutput at configurable intervals.
