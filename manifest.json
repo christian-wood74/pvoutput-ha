@@ -8,5 +8,6 @@
   "codeowners": ["@deishelon"],
   "config_flow": true,
   "iot_class": "cloud_push",
+  "icon": "mdi:solar-power",
   "version": "1.0.0"
 }
