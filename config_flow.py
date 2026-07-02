@@ -63,16 +63,16 @@ class PVOutputConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="entities",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_PV_POWER_ENTITY, default=""): selector.EntitySelector(
+                    vol.Optional(CONF_PV_POWER_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="power")
                     ),
-                    vol.Optional(CONF_PV_ENERGY_ENTITY, default=""): selector.EntitySelector(
+                    vol.Optional(CONF_PV_ENERGY_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="energy")
                     ),
-                    vol.Optional(CONF_TEMPERATURE_ENTITY, default=""): selector.EntitySelector(
+                    vol.Optional(CONF_TEMPERATURE_ENTITY): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
                     ),
-                    vol.Optional(CONF_API_URL, default=""): selector.TextSelector(
+                    vol.Optional(CONF_API_URL): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
                     ),
                     vol.Required(
@@ -107,39 +107,49 @@ class PVOutputOptionsFlowHandler(config_entries.OptionsFlow):
 
         conf = {**self.config_entry.data, **self.config_entry.options}
 
+        schema = {}
+        if conf.get(CONF_PV_POWER_ENTITY):
+            schema[vol.Optional(CONF_PV_POWER_ENTITY, default=conf[CONF_PV_POWER_ENTITY])] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            )
+        else:
+            schema[vol.Optional(CONF_PV_POWER_ENTITY)] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="power")
+            )
+
+        if conf.get(CONF_PV_ENERGY_ENTITY):
+            schema[vol.Optional(CONF_PV_ENERGY_ENTITY, default=conf[CONF_PV_ENERGY_ENTITY])] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="energy")
+            )
+        else:
+            schema[vol.Optional(CONF_PV_ENERGY_ENTITY)] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="energy")
+            )
+
+        if conf.get(CONF_TEMPERATURE_ENTITY):
+            schema[vol.Optional(CONF_TEMPERATURE_ENTITY, default=conf[CONF_TEMPERATURE_ENTITY])] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            )
+        else:
+            schema[vol.Optional(CONF_TEMPERATURE_ENTITY)] = selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            )
+
+        if conf.get(CONF_API_URL):
+            schema[vol.Optional(CONF_API_URL, default=conf[CONF_API_URL])] = selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
+            )
+        else:
+            schema[vol.Optional(CONF_API_URL)] = selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
+            )
+
+        schema[vol.Required(CONF_UPLOAD_INTERVAL, default=conf.get(CONF_UPLOAD_INTERVAL, DEFAULT_UPLOAD_INTERVAL))] = vol.All(
+            vol.Coerce(int), vol.Range(min=1)
+        )
+
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        CONF_PV_POWER_ENTITY,
-                        default=conf.get(CONF_PV_POWER_ENTITY, ""),
-                    ): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="sensor", device_class="power")
-                    ),
-                    vol.Optional(
-                        CONF_PV_ENERGY_ENTITY,
-                        default=conf.get(CONF_PV_ENERGY_ENTITY, ""),
-                    ): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="sensor", device_class="energy")
-                    ),
-                    vol.Optional(
-                        CONF_TEMPERATURE_ENTITY,
-                        default=conf.get(CONF_TEMPERATURE_ENTITY, ""),
-                    ): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
-                    ),
-                    vol.Optional(
-                        CONF_API_URL,
-                        default=conf.get(CONF_API_URL, ""),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(type=selector.TextSelectorType.URL)
-                    ),
-                    vol.Required(
-                        CONF_UPLOAD_INTERVAL,
-                        default=conf.get(CONF_UPLOAD_INTERVAL, DEFAULT_UPLOAD_INTERVAL),
-                    ): vol.All(vol.Coerce(int), vol.Range(min=1)),
-                }
-            ),
+            data_schema=vol.Schema(schema),
             errors=errors,
         )
