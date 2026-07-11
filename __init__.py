@@ -130,8 +130,13 @@ class PVOutputUploader:
         temperature_entity = conf.get(CONF_TEMPERATURE_ENTITY)
         api_url = conf.get(CONF_API_URL)
 
+        sun_state = self.hass.states.get("sun.sun")
+        if sun_state and sun_state.state == "below_horizon":
+            _LOGGER.debug("Skipping upload: sun is below horizon for System %s", system_id)
+            return
+
         now = dt_util.now()
-        
+
         pv_power = self._get_value(pv_power_entity)
         pv_energy = self._get_value(pv_energy_entity)
         
